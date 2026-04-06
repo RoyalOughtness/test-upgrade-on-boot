@@ -1,9 +1,5 @@
 #!/bin/bash
-LOGFILE=/var/log/bootc-upgrade.log
-exec > >(tee -a "$LOGFILE") 2>&1
-
 echo "Starting upgrade-on-boot service"
-
 rpm_ostree_status=$(rpm-ostree status --json --booted)
 image_date=$(jq -cr '.deployments[0].timestamp' <<<"$rpm_ostree_status")
 current_seconds=$(date +%s)
