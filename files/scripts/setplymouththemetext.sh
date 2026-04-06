@@ -8,3 +8,5 @@ sed -i 's/Do not turn off your computer/Press Q to boot existing deployment/' /u
 sed -i 's/Installing Updates/Downloading Updates/' /usr/share/plymouth/themes/bgrt/bgrt.plymouth
 
 systemctl enable upgrade-on-boot.service
+
+dnf install -y firefox libreoffice
