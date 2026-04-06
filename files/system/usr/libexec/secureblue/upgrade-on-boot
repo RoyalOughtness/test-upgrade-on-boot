@@ -9,7 +9,6 @@ mkfifo "$BOOTC_OUTPUT"
 
 plymouth watch-keystroke --keys="q" --command "systemctl stop upgrade-on-boot.service" &
 plymouth change-mode --updates
-plymouth system-update --progress=0
 plymouth message --text="Press Q to cancel and boot existing deployment"
 
 while IFS= read -r line; do
