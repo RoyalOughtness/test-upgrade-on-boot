@@ -13,7 +13,7 @@ if (( difference < day )); then
 fi
 
 UPDATE_FAILURE_STRING="Update failed, booting existing deployment..."
-CANCEL_STRING="Press Q to cancel and boot existing deployment."
+CANCEL_STRING="Press Q to cancel and boot the existing deployment."
 
 plymouth watch-keystroke --keys="q" --command "systemctl stop upgrade-on-boot.service" &
 plymouth message --text="$CANCEL_STRING"
