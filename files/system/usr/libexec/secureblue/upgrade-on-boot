@@ -7,7 +7,7 @@ difference=$((current_seconds - image_date))
 # week=$((7 * 24 * 60 * 60))
 # day=$((24 * 60 * 60))
 minute=60
-if (( difference < day )); then
+if (( difference < minute )); then
     echo "Image is less than a minute old. Booting current deployment."
     exit 0  
 fi
