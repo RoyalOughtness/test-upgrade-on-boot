@@ -50,13 +50,13 @@ rm -f "$BOOTC_OUTPUT"
 
 if [ $BOOTC_EXIT -ne 0 ]; then
     echo "Upgrade failed, booting existing deployment"
-    plymouth message --text="Upgrade failed. Booting existing deployment..."
+    plymouth message --text="Update failed. Booting existing deployment..."
     exit 0
 fi
 
 if bootc status --json | jq -e '.status.staged != null' > /dev/null 2>&1; then
     echo "New deployment staged, rebooting"
-    plymouth message --text="Upgrade complete. Rebooting..."
+    plymouth message --text="Update complete. Rebooting..."
     systemctl reboot
 else
     echo "No new deployment staged, booting existing deployment"
