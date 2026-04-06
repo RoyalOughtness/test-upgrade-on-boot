@@ -13,5 +13,6 @@ modules:
   - type: script
     scripts:
       - setplymouththemetext.sh
+      - regenerateinitramfs.sh
 
   - type: signing 
