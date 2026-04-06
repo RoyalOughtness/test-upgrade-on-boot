@@ -6,8 +6,9 @@ base-image: ghcr.io/secureblue/silverblue-main-hardened
 image-version: latest
 modules:
   - type: files
-      - source: system
-        destination: /
+    files:
+    - source: system
+      destination: /
 
   - type: scripts
     files:
