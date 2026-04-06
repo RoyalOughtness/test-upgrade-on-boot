@@ -32,7 +32,7 @@ while IFS= read -r line; do
             echo "Percent: $percent"
             if [ "$percent" -ge 100 ]; then
                 plymouth change-mode --boot-up
-                plymouth message --text="Deploying upgrade... Press Q to cancel and boot existing deployment"
+                plymouth message --text="Deploying update... Press Q to cancel and boot existing deployment"
             else
                 plymouth system-update --progress="$percent"
             fi
