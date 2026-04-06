@@ -2,25 +2,35 @@
 LOGFILE=/var/log/bootc-upgrade.log
 exec > >(tee -a "$LOGFILE") 2>&1
 
+echo "Starting bootc upgrade"
+
 if bootc upgrade --check 2>&1 | grep -q "No changes"; then
+    echo "No update available, booting normally"
     exit 0
 fi
+
+echo "Update available, proceeding"
 
 BOOTC_OUTPUT=$(mktemp -u /run/bootc-upgrade-XXXXXX)
 mkfifo "$BOOTC_OUTPUT"
 
 plymouth watch-keystroke --keys="q" --command "systemctl stop upgrade-on-boot.service" &
 plymouth change-mode --updates
+plymouth system-update --progress=0
 plymouth message --text="Press Q to cancel and boot existing deployment"
+echo "Plymouth initialized"
 
 while IFS= read -r line; do
+    echo "Got line: $line"
     type=$(echo "$line" | jq -r '.type // empty')
+    echo "Type: $type"
     case "$type" in
         ProgressBytes)
             steps=$(echo "$line" | jq -r '.steps')
             steps_cached=$(echo "$line" | jq -r '.stepsCached')
             steps_total=$(echo "$line" | jq -r '.stepsTotal')
             percent=$(echo "$steps $steps_cached $steps_total" | awk '{printf "%d", ($1 + $2) / $3 * 100}')
+            echo "Percent: $percent"
             if [ "$percent" -ge 100 ]; then
                 plymouth change-mode --boot-up
                 plymouth message --text="Applying update... Press Q to cancel and boot existing deployment"
@@ -28,21 +38,28 @@ while IFS= read -r line; do
                 plymouth system-update --progress="$percent"
             fi
             ;;
+        ProgressSteps)
+            echo "ProgressSteps received"
+            ;;
     esac
 done < "$BOOTC_OUTPUT" &
 
 bootc upgrade --quiet --progress-fd 3 3>"$BOOTC_OUTPUT"
 BOOTC_EXIT=$?
+echo "bootc exited with: $BOOTC_EXIT"
 rm -f "$BOOTC_OUTPUT"
 
 if [ $BOOTC_EXIT -ne 0 ]; then
+    echo "Upgrade failed, booting existing deployment"
     plymouth message --text="Upgrade failed. Booting existing deployment..."
     exit 0
 fi
 
 if bootc status --json | jq -e '.status.staged != null' > /dev/null 2>&1; then
+    echo "New deployment staged, rebooting"
     plymouth message --text="Upgrade complete. Rebooting..."
     systemctl reboot
 else
+    echo "No new deployment staged, booting existing deployment"
     exit 0
 fi
