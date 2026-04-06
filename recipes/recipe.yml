@@ -10,8 +10,8 @@ modules:
     - source: system
       destination: /
 
-  - type: scripts
-    files:
+  - type: script
+    scripts:
       - setplymouththemetext.sh
 
   - type: signing 
