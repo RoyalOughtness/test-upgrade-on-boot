@@ -1,4 +1,6 @@
 #!/bin/bash
+LOGFILE=/var/log/bootc-upgrade.log
+exec > >(tee -a "$LOGFILE") 2>&1
 
 if bootc upgrade --check 2>&1 | grep -q "No changes"; then
     exit 0
