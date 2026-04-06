@@ -21,6 +21,13 @@ BOOTC_UPGRADE_CHECK_OUTPUT="$(bootc upgrade --check 2>&1)"
 
 if grep -q "local rpm-ostree modifications" <<< "$BOOTC_UPGRADE_CHECK_OUTPUT"; then
     echo "Using rpm-ostree"
+    # https://github.com/coreos/rpm-ostree/issues/1579#issuecomment-4141760891
+    # `rpm-ostree upgrade --check` is broken/unreliable. As such, this section *assumes*
+    # that an upgrade is available. This is a terrible experience during testing, 
+    # since if packages are layered then `rpm-ostree` will be used, and 
+    # `rpm-ostree` will run every specified interval regardless of whether an 
+    # upgrade is actually available. However, in production this script will only run
+    # at most weekly, after which time a new image will almost certainly be available.
     plymouth message --text="Staging update... $CANCEL_STRING"
     rpm-ostree upgrade
     RPM_OSTREE_EXIT=$?
