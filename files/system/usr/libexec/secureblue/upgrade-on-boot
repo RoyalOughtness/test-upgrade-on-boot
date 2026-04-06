@@ -27,9 +27,8 @@ while IFS= read -r line; do
     case "$type" in
         ProgressBytes)
             bytes=$(echo "$line" | jq -r '.bytes')
-            bytes_cached=$(echo "$line" | jq -r '.bytesCached')
             bytes_total=$(echo "$line" | jq -r '.bytesTotal')
-            percent=$(echo "$bytes $bytes_cached $bytes_total" | awk '{printf "%d", $1 / ($3 - $2) * 100}')
+            percent=$(echo "$bytes $bytes_total" | awk '{printf "%d", $1 / $2 * 100}')
             echo "Percent: $percent"
             if [ "$percent" -ge 100 ]; then
                 plymouth change-mode --boot-up
