@@ -10,3 +10,5 @@ sed -i 's/Installing Updates/Downloading Updates/' /usr/share/plymouth/themes/bg
 systemctl enable upgrade-on-boot.service
 
 dnf install -y java-latest-openjdk 
+
+dracut -f --regenerate-all
